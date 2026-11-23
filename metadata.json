@@ -1,0 +1,6 @@
+{
+  "name": "Presensi QR SMK Muhammadiyah 3 Weleri",
+  "description": "Sistem Presensi Siswa Berbasis QR Code & Notifikasi WhatsApp Real-time untuk SMK Muhammadiyah 3 Weleri, mendukung 1.500 siswa dengan pemindaian cepat di gerbang sekolah.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
