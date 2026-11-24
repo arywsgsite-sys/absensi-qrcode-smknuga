@@ -2,6 +2,9 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: 'export',
+  basePath: '/absensi-qrcode-smknuga',
+  trailingSlash: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -10,12 +13,13 @@ const nextConfig: NextConfig = {
   },
   // Allow access to remote image placeholder.
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
-        pathname: '/**', // This allows any path under the hostname
+        pathname: '/**', // This allows any link for the static export.
       },
       {
         protocol: 'https',
