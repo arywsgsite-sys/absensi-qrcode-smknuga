@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Printer, Download, X, User, Check, ShieldCheck } from 'lucide-react';
+import { Printer, Download, X, User, ShieldCheck } from 'lucide-react';
 import { Student } from '../../src/types';
 import { SchoolLogo } from '../common/SchoolLogo';
 
@@ -25,38 +25,41 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
   };
 
   const handleDownloadQr = (st: Student) => {
-    // Generate SVG download
     const svgEl = document.getElementById(`qr-code-svg-${st.id}`);
     if (!svgEl) return;
 
     const svgData = new XMLSerializer().serializeToString(svgEl);
-    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const svgBlob = new Blob([svgData], {
+      type: 'image/svg+xml;charset=utf-8',
+    });
     const svgUrl = URL.createObjectURL(svgBlob);
     const downloadLink = document.createElement('a');
+
     downloadLink.href = svgUrl;
     downloadLink.download = `QR_${st.nisn}_${st.name.replace(/\s+/g, '_')}.svg`;
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(svgUrl);
   };
 
   if (studentsToRender.length === 0) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-slate-900 rounded-3xl border border-slate-700 shadow-2xl overflow-hidden my-auto">
-        {/* Modal Top Bar (Hidden during print) */}
-        <div className="py-4 px-6 bg-slate-800 border-b border-slate-700 flex items-center justify-between text-white no-print">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-md sm:p-6">
+      <div className="relative my-auto w-full max-w-4xl overflow-hidden rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl">
+        {/* Modal Top Bar */}
+        <div className="no-print flex items-center justify-between border-b border-slate-700 bg-slate-800 px-6 py-4 text-white">
           <div className="flex items-center gap-2.5">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <ShieldCheck className="h-5 w-5 text-emerald-400" />
             <div>
-              <h3 className="font-extrabold text-sm sm:text-base tracking-tight">
+              <h3 className="text-sm font-extrabold tracking-tight sm:text-base">
                 {isBatch
                   ? `Cetak Massal Kartu Pelajar (${studentsToRender.length} Siswa)`
                   : `Kartu Tanda Pelajar QR - ${student?.name}`}
               </h3>
               <p className="text-xs text-slate-400">
-                Format standar ID Pelajar SMK Muhammadiyah 3 Weleri
+                Format kartu pelajar potrait SMK Muhammadiyah 3 Weleri
               </p>
             </div>
           </div>
@@ -66,10 +69,10 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
               <button
                 type="button"
                 onClick={() => handleDownloadQr(student)}
-                className="px-3 py-1.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                className="flex items-center gap-1.5 rounded-xl bg-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-200 transition-colors hover:bg-slate-600"
                 title="Unduh QR Code SVG"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Unduh QR</span>
               </button>
             )}
@@ -77,171 +80,149 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
             <button
               type="button"
               onClick={handlePrint}
-              className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md transition-all"
+              className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-1.5 text-xs font-bold text-white shadow-md transition-all hover:bg-emerald-500"
             >
-              <Printer className="w-4 h-4" />
+              <Printer className="h-4 w-4" />
               <span>Cetak Kartu (Print)</span>
             </button>
 
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+              className="rounded-full p-1.5 text-slate-400 transition-colors hover:bg-slate-700 hover:text-white"
+              aria-label="Tutup"
             >
-              <X className="w-5 h-5" />
+              <X className="h-5 w-5" />
             </button>
           </div>
         </div>
 
         {/* Card Preview Container */}
-        <div className="p-6 sm:p-8 bg-slate-950 flex flex-col items-center justify-center gap-8 max-h-[75vh] overflow-y-auto">
+        <div className="flex max-h-[75vh] flex-col items-center justify-center gap-8 overflow-y-auto bg-slate-950 p-6 sm:p-8">
           {studentsToRender.map((st) => (
             <div
               key={st.id}
-              className="printable-card-container relative w-full max-w-[500px] h-[310px] rounded-2xl overflow-hidden shadow-2xl bg-white text-slate-900 border-2 border-emerald-600 flex flex-col justify-between select-none"
-              style={{
-                pageBreakAfter: 'always',
-              }}
+              className="printable-card-container relative flex h-[86mm] w-[54mm] shrink-0 flex-col overflow-hidden rounded-xl border-2 border-emerald-600 bg-white text-slate-900 shadow-2xl select-none"
+              style={{ pageBreakAfter: 'always' }}
             >
-              {/* Header: School Identity */}
-              <div className="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white px-4 py-2.5 flex items-center gap-3 border-b-2 border-amber-400">
-                <SchoolLogo size={42} />
-                <div className="flex-1 text-center pr-4">
-                  <div className="text-[8px] sm:text-[9px] font-bold tracking-wider uppercase text-emerald-200">
+              {/* School Identity */}
+              <div className="flex items-center gap-2 border-b-2 border-amber-400 bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 px-2 py-2 text-white">
+                <SchoolLogo size={30} />
+                <div className="min-w-0 flex-1 text-center">
+                  <div className="text-[6px] font-bold uppercase tracking-wide text-emerald-200">
                     MAJELIS DIKDASMEN PDM KENDAL
                   </div>
-                  <div className="text-xs sm:text-sm font-black tracking-tight leading-none text-white">
+                  <div className="text-[9px] font-black leading-tight">
                     SMK MUHAMMADIYAH 3 WELERI
                   </div>
-                  <div className="text-[7.5px] sm:text-[8.5px] text-emerald-100 font-medium leading-tight mt-0.5">
-                    Jl. Bahari No. 345 Weleri, Kec. Weleri, Kab. Kendal • Telp. (0294) 641889
+                  <div className="text-[5.5px] leading-tight text-emerald-100">
+                    Jl. Bahari No. 345 Weleri, Kab. Kendal
                   </div>
                 </div>
               </div>
 
               {/* Title Badge */}
-              <div className="bg-emerald-50 px-4 py-1 flex items-center justify-between border-b border-emerald-100">
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-900">
-                  KARTU TANDA PELAJAR & PRESENSI GERBANG
-                </span>
-                <span className="text-[9px] font-bold text-emerald-700 uppercase">
-                  BERLAKU S/D LULUS
-                </span>
+              <div className="border-b border-emerald-100 bg-emerald-50 px-2 py-1 text-center">
+                <div className="text-[7px] font-black uppercase tracking-wide text-emerald-900">
+                  Kartu Tanda Pelajar
+                </div>
+                <div className="text-[6px] font-bold text-emerald-700">
+                  Presensi Gerbang • Berlaku S/D Lulus
+                </div>
               </div>
 
-              {/* Middle Section: Photo, Bio, QR Code */}
-              <div className="px-4 py-2 flex items-center justify-between gap-3 flex-1 bg-white">
-                {/* Photo */}
-                <div className="flex flex-col items-center flex-shrink-0">
-                  <div className="w-20 h-24 rounded-lg overflow-hidden border-2 border-emerald-600 shadow-sm bg-slate-100 flex items-center justify-center">
+              {/* Photo and Student Identity */}
+              <div className="flex items-center gap-2 px-2 pt-2">
+                <div className="flex shrink-0 flex-col items-center">
+                  <div className="flex h-[22mm] w-[17mm] items-center justify-center overflow-hidden rounded border border-emerald-600 bg-slate-100">
                     {st.photoUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={st.photoUrl}
                         alt={st.name}
-                        className="w-full h-full object-cover"
+                        className="h-full w-full object-cover"
                       />
                     ) : (
-                      <User className="w-10 h-10 text-slate-400" />
+                      <User className="h-7 w-7 text-slate-400" />
                     )}
                   </div>
-                  <span className="text-[8px] font-bold text-slate-500 mt-1 uppercase">
+                  <span className="mt-0.5 text-[5.5px] font-bold text-slate-500">
                     {st.gender === 'L' ? 'LAKI-LAKI' : 'PEREMPUAN'}
                   </span>
                 </div>
 
-                {/* Bio Details */}
-                <div className="flex-1 min-w-0 text-left text-[11px] leading-tight space-y-1">
+                <div className="min-w-0 flex-1 space-y-1 text-[7px] leading-tight">
                   <div>
-                    <span className="text-[9px] text-slate-400 font-semibold block uppercase">
+                    <span className="block text-[5.5px] font-semibold uppercase text-slate-400">
                       Nama Lengkap
                     </span>
-                    <span className="font-black text-slate-900 text-xs sm:text-sm truncate block">
+                    <span className="block break-words font-black text-slate-900">
                       {st.name}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <span className="text-[9px] text-slate-400 font-semibold block uppercase">
-                        NISN
-                      </span>
-                      <span className="font-mono font-black text-slate-800 text-xs block">
-                        {st.nisn}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-[9px] text-slate-400 font-semibold block uppercase">
-                        Kelas
-                      </span>
-                      <span className="font-bold text-emerald-800 text-xs block">
-                        {st.className}
-                      </span>
-                    </div>
-                  </div>
-
                   <div>
-                    <span className="text-[9px] text-slate-400 font-semibold block uppercase">
-                      Kompetensi Keahlian
+                    <span className="block text-[5.5px] font-semibold uppercase text-slate-400">
+                      NISN
                     </span>
-                    <span className="font-semibold text-slate-700 text-[10px] block truncate">
-                      {st.major}
+                    <span className="block font-mono font-black">
+                      {st.nisn}
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-[9px] text-slate-400 font-semibold block uppercase">
-                      No. WA Orang Tua / Wali
+                    <span className="block text-[5.5px] font-semibold uppercase text-slate-400">
+                      Kelas / Kompetensi
                     </span>
-                    <span className="font-mono text-[10px] text-slate-600 block">
+                    <span className="block break-words font-bold text-emerald-800">
+                      {st.className} • {st.major}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="block text-[5.5px] font-semibold uppercase text-slate-400">
+                      WA Orang Tua / Wali
+                    </span>
+                    <span className="block break-all font-mono text-slate-700">
                       {st.parentPhone}
                     </span>
                   </div>
                 </div>
+              </div>
 
-                {/* QR Code Container */}
-                <div className="flex flex-col items-center flex-shrink-0 bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-inner">
-                  <div className="bg-white p-1 rounded-lg border border-slate-300">
+              {/* QR Code */}
+              <div className="flex flex-1 flex-col items-center justify-center px-2 py-1">
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-1.5">
+                  <div className="rounded bg-white p-1">
                     <QRCodeSVG
                       id={`qr-code-svg-${st.id}`}
                       value={st.qrToken}
-                      size={86}
+                      size={96}
                       level="M"
                       includeMargin={false}
                     />
                   </div>
-                  <span className="font-mono text-[8px] font-black text-slate-600 mt-1 tracking-tighter">
-                    {st.qrToken}
-                  </span>
-                  <span className="text-[7.5px] text-emerald-700 font-bold">
-                    Scan Gerbang
-                  </span>
                 </div>
+                <span className="mt-1 break-all text-center font-mono text-[6px] font-bold text-slate-600">
+                  {st.qrToken}
+                </span>
+                <span className="text-[6px] font-bold text-emerald-700">
+                  Scan Gerbang
+                </span>
               </div>
 
-              {/* Card Footer: Signature & Hologram placeholder */}
-              <div className="px-4 py-1.5 bg-gradient-to-r from-slate-100 to-emerald-50 border-t border-slate-200 flex items-center justify-between text-[8px] text-slate-600">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3.5 h-3.5 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[6px]">
-                    M
-                  </div>
-                  <span className="font-semibold">SMK Muga 3 Weleri Presensi Digital</span>
-                </div>
-
-                <div className="text-right">
-                  <span>Weleri, Kendal • Kepala Sekolah</span>
-                  <div className="font-bold text-slate-900 leading-tight">
-                    H. Bambang Prasetyo, S.Pd., M.M.
-                  </div>
-                </div>
+              {/* Footer */}
+              <div className="border-t border-slate-200 bg-gradient-to-r from-slate-100 to-emerald-50 px-2 py-1 text-center text-[5.5px] text-slate-600">
+                SMK Muga 3 Weleri • Presensi Digital
               </div>
             </div>
           ))}
         </div>
 
-        {/* Modal Bottom note */}
-        <div className="py-3 px-6 bg-slate-800 text-center text-xs text-slate-400 border-t border-slate-700 no-print">
-          Gunakan kertas PVC Card atau kertas foto tebal saat mencetak. QR Code dapat langsung dipindai pada kamera gerbang.
+        {/* Modal Bottom Note */}
+        <div className="no-print border-t border-slate-700 bg-slate-800 px-6 py-3 text-center text-xs text-slate-400">
+          Gunakan kertas PVC Card atau kertas foto tebal saat mencetak.
+          QR Code dapat langsung dipindai pada kamera gerbang.
         </div>
       </div>
     </div>
