@@ -48,7 +48,6 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-md sm:p-6">
       <div className="relative my-auto w-full max-w-4xl overflow-hidden rounded-3xl border border-slate-700 bg-slate-900 shadow-2xl">
-        {/* Modal Top Bar */}
         <div className="no-print flex items-center justify-between border-b border-slate-700 bg-slate-800 px-6 py-4 text-white">
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="h-5 w-5 text-emerald-400" />
@@ -97,7 +96,6 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
           </div>
         </div>
 
-        {/* Card Preview Container */}
         <div className="flex max-h-[75vh] flex-col items-center justify-center gap-8 overflow-y-auto bg-slate-950 p-6 sm:p-8">
           {studentsToRender.map((st) => (
             <div
@@ -105,7 +103,6 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
               className="printable-card-container relative flex h-[86mm] w-[54mm] shrink-0 flex-col overflow-hidden rounded-xl border-2 border-emerald-600 bg-white text-slate-900 shadow-2xl select-none"
               style={{ pageBreakAfter: 'always' }}
             >
-              {/* School Identity */}
               <div className="flex items-center gap-2 border-b-2 border-amber-400 bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 px-2 py-2 text-white">
                 <SchoolLogo size={30} />
                 <div className="min-w-0 flex-1 text-center">
@@ -121,7 +118,6 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
                 </div>
               </div>
 
-              {/* Title Badge */}
               <div className="border-b border-emerald-100 bg-emerald-50 px-2 py-1 text-center">
                 <div className="text-[7px] font-black uppercase tracking-wide text-emerald-900">
                   Kartu Tanda Pelajar
@@ -131,7 +127,6 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
                 </div>
               </div>
 
-              {/* Photo and Student Identity */}
               <div className="flex items-center gap-2 px-2 pt-2">
                 <div className="flex shrink-0 flex-col items-center">
                   <div className="flex h-[22mm] w-[17mm] items-center justify-center overflow-hidden rounded border border-emerald-600 bg-slate-100">
@@ -190,7 +185,6 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
                 </div>
               </div>
 
-              {/* QR Code */}
               <div className="flex flex-1 flex-col items-center justify-center px-2 py-1">
                 <div className="rounded-lg border border-slate-200 bg-slate-50 p-1.5">
                   <div className="rounded bg-white p-1">
@@ -211,7 +205,6 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
                 </span>
               </div>
 
-              {/* Footer */}
               <div className="border-t border-slate-200 bg-gradient-to-r from-slate-100 to-emerald-50 px-2 py-1 text-center text-[5.5px] text-slate-600">
                 SMK Muga 3 Weleri • Presensi Digital
               </div>
@@ -219,7 +212,6 @@ export const StudentCardModal: React.FC<StudentCardModalProps> = ({
           ))}
         </div>
 
-        {/* Modal Bottom Note */}
         <div className="no-print border-t border-slate-700 bg-slate-800 px-6 py-3 text-center text-xs text-slate-400">
           Gunakan kertas PVC Card atau kertas foto tebal saat mencetak.
           QR Code dapat langsung dipindai pada kamera gerbang.
